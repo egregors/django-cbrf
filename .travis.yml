@@ -1,0 +1,13 @@
+language: python
+python:
+- '3.5'
+- '3.6'
+install:
+- pip install django
+- pip install -e .
+script:
+  - cd tests && python manage.py test test_app
+notifications:
+  slack:
+    rooms:
+      secure: GU+R7cQWnAji55HIy2R+cxeMcOx7AKyUiCLGO2iLG+8Z9nZYLG0WrpmqEn19JXLtyhuyKtBeEJarA8zbMdehj8ZoITJJX2PbWVP08r9YabNpL0AOIq2w5hjMa/kdVI3HALYCC9A+I/kprMmNhWp0AnkpykHFNNJ9qzCsdhK0Q8pt7gfxGbzxYC0Sbr0TFk6fT4d0w0M67sNSeULMsiCgV75XjEz+UGeeUFLmGn1of83QqdKRDNfbhEzGoAWBo4x2z8pxBDuaI/Es4hwexXq2Tf5LSpMNwpdQ8u19PM2mr+K1mK45+VOB5GeO800pn8drPC30eq9am79SbBB2pjsc5k4u/jDQQG2UUTTZyYgSElQl4713ZUKcttYgS6IipNJb5i0FTCvzacjAJVp0sZo2gl9NScMxzvTTIPciNQoRgmO4EEvpe7eFDAnCV9/EKL6P+AewmbWcULcPpln5SI75s37fBXOWdnP20RaKay//hayMnTHMB2/9npBedJB/rkvfRvLpMU2C+tw8oGXP1yMSrd+Zaygl1IKZTbca5A9OZacAeiekSbYLUJ0kkMOH3YKIPJV6WpPEZ7PWVYd/gVLsCfdfB2Ld3cg2k8cHeQ0+QNN3rlU4eZ1m5NghjeTQxVxHDTPnZ1jtQFrW8JjXOaBiTB9qYCmSCbUWt1asKCwoXRM=
