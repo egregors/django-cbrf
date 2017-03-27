@@ -3,7 +3,6 @@ python:
 - '3.5'
 - '3.6'
 install:
-- pip install requests django cbrf
 - pip install -e .
 script:
   - cd tests && python manage.py test test_app

@@ -3,16 +3,15 @@ from __future__ import unicode_literals, absolute_import
 
 from distutils.core import setup
 
-from setuptools import find_packages
-
 from django_cbrf import __version__
 
 setup(
     name='django_cbrf',
     version=__version__,
-    packages=find_packages(),
+    packages=['django_cbrf'],
     install_requires=[
-        "cbrf==0.3.1",
+        "django>=1.10",
+        "cbrf==0.3.3",
     ],
     url='https://github.com/Egregors/django-cbrf',
     license='MIT',
