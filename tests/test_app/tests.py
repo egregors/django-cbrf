@@ -1,16 +1,14 @@
-import logging
+from datetime import datetime
+from decimal import Decimal
 
 from django.core.management import call_command
 from django.db import IntegrityError
 from django.test import TestCase
 
-from django_cbrf.models import Currency
+from django_cbrf.models import Currency, Record
 
 
 class CBRFManagementCommandsTestCase(TestCase):
-    def setUp(self):
-        logging.disable(logging.CRITICAL)
-
     def test_load_currencies(self):
         """ Try to populate Currencies """
 
@@ -30,10 +28,13 @@ class CBRFManagementCommandsTestCase(TestCase):
         call_command('load_currencies', '--force')
         self.assertEqual(len(Currency.objects.all()), 60)
 
+    def test_load_rates(self):
+        """ Try to populate some rates records """
+        pass
+
 
 class CurrencyTestCase(TestCase):
     def setUp(self):
-        logging.disable(logging.CRITICAL)
         Currency.populate()
 
     def test_get_by_cbrf_id(self):
@@ -62,3 +63,24 @@ class CurrencyTestCase(TestCase):
         bad_iso = 'LOL'
 
         self.assertIsNone(Currency.get_by_iso_char_code(bad_iso))
+
+
+class RecordsTestCase(TestCase):
+    def setUp(self):
+        Currency.populate()
+
+    def test_populate_for_dates(self):
+        date_1 = datetime(2001, 3, 2)
+        date_2 = datetime(2001, 3, 14)
+
+        usd = Currency.objects.get(cbrf_id='R01235')
+
+        rates = Record._populate_for_dates(date_1, date_2, usd)
+        self.assertEqual(len(rates), 8)
+        self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=2).first().value, Decimal('28.6200'))
+        self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=3).first().value, Decimal('28.6500'))
+        self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=6).first().value, Decimal('28.6600'))
+        self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=7).first().value, Decimal('28.6300'))
+
+    def test_get_for_dates(self):
+        pass
