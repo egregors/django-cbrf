@@ -1,14 +1,19 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals, absolute_import
 
+import datetime
 import logging
+from decimal import Decimal
 
-from cbrf import get_currencies_info
-from django.conf import settings
+from cbrf import get_currencies_info, get_dynamic_rates
+from cbrf.utils import str_to_date
 from django.db import models, transaction
 from django.utils.translation import ugettext_lazy as _
 
-if settings.DEBUG:
+from django_cbrf.utils import get_currency_model
+from .settings import CBRF_APP_NAME, DEBUG
+
+if DEBUG:
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
@@ -17,6 +22,7 @@ else:
 
 
 class AbstractCurrency(models.Model):
+    """ Abstract Currency model """
     cbrf_id = models.CharField(verbose_name='CB RF code', max_length=12, unique=True, db_index=True)
     parent_code = models.CharField(verbose_name='parent code', max_length=6)
 
@@ -35,7 +41,7 @@ class AbstractCurrency(models.Model):
         ordering = ('cbrf_id',)
 
     def __str__(self):
-        return '[{}] {}/{}'.format(self.cbrf_id, self.name, self.eng_name)
+        return '[{}] {}/{}'.format(self.iso_char_code, self.name, self.eng_name)
 
     @classmethod
     def _populate(cls):
@@ -65,7 +71,6 @@ class AbstractCurrency(models.Model):
         """
         raw_currencies = get_currencies_info()
         for currency in raw_currencies:
-            logger.info('{} ({}) populated'.format(currency.attrib['ID'], currency.findtext('EngName')))
             _iso_num_code = currency.findtext('ISO_Num_Code')
             _iso_char_code = currency.findtext('ISO_Char_Code')
 
@@ -107,3 +112,51 @@ class AbstractCurrency(models.Model):
         except cls.DoesNotExist:
             logger.error("Currency with {} iso code is not exist!".format(iso_char_code))
             return None
+
+
+class AbstractRecord(models.Model):
+    """ Abstract Record model """
+    currency = models.ForeignKey(CBRF_APP_NAME + '.Currency', on_delete=models.CASCADE)
+    date = models.DateField()
+    value = models.DecimalField(verbose_name=_('value'), max_digits=9, decimal_places=4)
+
+    class Meta:
+        abstract = True
+        verbose_name = _('record')
+        verbose_name_plural = _('records')
+
+    def __str__(self):
+        return '[{}] {}: {}'.format(self.currency.iso_char_code, self.date, self.value)
+
+
+    @classmethod
+    def _populate_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime,
+                            currency: AbstractCurrency):
+        """ Load list of currency rates from date_begin to date_end.
+        
+        :param date_begin: first day of rates
+        :param date_end: last day of rates
+        :param currency_cbrf_id: see :class Currency:
+        """
+        raw_rates = get_dynamic_rates(date_req1=date_begin, date_req2=date_end, currency_id=currency.cbrf_id)
+
+        for rate in raw_rates:
+            cls.objects.create(
+                currency=currency,
+                date=str_to_date(rate.attrib['Date']),
+                value=Decimal(rate.findtext('Value').replace(',', '.'))
+            )
+
+        return cls.objects.filter(currency=currency, date__gte=date_begin, date__lte=date_end)
+
+    @classmethod
+    def get_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime, currency: AbstractCurrency):
+        """ Try to get rates from local DB. If response is empty -> try to get from CBR API """
+
+        currency = get_currency_model('Currency').objects.get(cbrf_id=currency.cbrf_id)
+        rates = cls.objects.filter(
+            currency=currency,
+            date__gte=date_begin,
+            date__lte=date_end)
+
+        return rates if rates else cls._populate_for_dates(date_begin, date_end, currency)
