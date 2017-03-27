@@ -12,6 +12,8 @@ if settings.DEBUG:
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
     logger = logging.getLogger(__name__)
+else:
+    logging.disable(logging.CRITICAL)
 
 
 class AbstractCurrency(models.Model):
@@ -81,3 +83,27 @@ class AbstractCurrency(models.Model):
     @classmethod
     def populate(cls):
         cls._populate()
+
+    @classmethod
+    def get_by_cbrf_id(cls, cbrf_id: str):
+        try:
+            return cls.objects.get(cbrf_id=cbrf_id)
+        except cls.DoesNotExist:
+            logger.error("Currency with {} code is not exist!".format(cbrf_id))
+            return None
+
+    @classmethod
+    def get_by_iso_num_code(cls, iso_num_code: str or int):
+        try:
+            return cls.objects.get(iso_num_code=int(iso_num_code))
+        except cls.DoesNotExist:
+            logger.error("Currency with {} iso code is not exist!".format(iso_num_code))
+            return None
+
+    @classmethod
+    def get_by_iso_char_code(cls, iso_char_code: str):
+        try:
+            return cls.objects.get(iso_char_code=iso_char_code)
+        except cls.DoesNotExist:
+            logger.error("Currency with {} iso code is not exist!".format(iso_char_code))
+            return None
