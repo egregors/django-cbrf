@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from decimal import Decimal
 
@@ -9,6 +10,9 @@ from django_cbrf.models import Currency, Record
 
 
 class CBRFManagementCommandsTestCase(TestCase):
+    def setUp(self):
+        logging.disable(logging.CRITICAL)
+
     def test_load_currencies(self):
         """ Try to populate Currencies """
 
@@ -36,6 +40,7 @@ class CBRFManagementCommandsTestCase(TestCase):
 class CurrencyTestCase(TestCase):
     def setUp(self):
         Currency.populate()
+        logging.disable(logging.CRITICAL)
 
     def test_get_by_cbrf_id(self):
         cbrf_id = 'R01500'
@@ -83,4 +88,13 @@ class RecordsTestCase(TestCase):
         self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=7).first().value, Decimal('28.6300'))
 
     def test_get_for_dates(self):
-        pass
+        self.assertEqual(len(Record.objects.all()), 0)
+
+        usd = Currency.objects.get(cbrf_id='R01235')
+
+        date_1 = datetime(2001, 3, 2)
+        date_2 = datetime(2001, 3, 14)
+
+        Record.get_for_dates(date_1, date_2, usd)
+
+        self.assertEqual(len(Record.objects.all()), 8)

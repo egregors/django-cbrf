@@ -95,6 +95,7 @@ class AbstractCurrency(models.Model):
             return cls.objects.get(cbrf_id=cbrf_id)
         except cls.DoesNotExist:
             logger.error("Currency with {} code is not exist!".format(cbrf_id))
+            logger.warning("You could use 'python manage.py load_currencies' to populate local db.")
             return None
 
     @classmethod
@@ -128,7 +129,6 @@ class AbstractRecord(models.Model):
     def __str__(self):
         return '[{}] {}: {}'.format(self.currency.iso_char_code, self.date, self.value)
 
-
     @classmethod
     def _populate_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime,
                             currency: AbstractCurrency):
@@ -141,11 +141,12 @@ class AbstractRecord(models.Model):
         raw_rates = get_dynamic_rates(date_req1=date_begin, date_req2=date_end, currency_id=currency.cbrf_id)
 
         for rate in raw_rates:
-            cls.objects.create(
-                currency=currency,
-                date=str_to_date(rate.attrib['Date']),
-                value=Decimal(rate.findtext('Value').replace(',', '.'))
-            )
+            with transaction.atomic():
+                cls.objects.create(
+                    currency=currency,
+                    date=str_to_date(rate.attrib['Date']),
+                    value=Decimal(rate.findtext('Value').replace(',', '.'))
+                )
 
         return cls.objects.filter(currency=currency, date__gte=date_begin, date__lte=date_end)
 
