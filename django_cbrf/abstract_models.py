@@ -7,10 +7,10 @@ from decimal import Decimal
 
 from cbrf import get_currencies_info, get_dynamic_rates
 from cbrf.utils import str_to_date
-from django.db import models, transaction
+from django.db import models, transaction, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 
-from django_cbrf.utils import get_currency_model
+from django_cbrf.utils import get_cbrf_model
 from .settings import CBRF_APP_NAME, DEBUG
 
 if DEBUG:
@@ -125,6 +125,7 @@ class AbstractRecord(models.Model):
         abstract = True
         verbose_name = _('record')
         verbose_name_plural = _('records')
+        unique_together = ('date', 'currency')
 
     def __str__(self):
         return '[{}] {}: {}'.format(self.currency.iso_char_code, self.date, self.value)
@@ -136,25 +137,34 @@ class AbstractRecord(models.Model):
         
         :param date_begin: first day of rates
         :param date_end: last day of rates
-        :param currency_cbrf_id: see :class Currency:
+        :param currency: see :class Currency:
         """
         raw_rates = get_dynamic_rates(date_req1=date_begin, date_req2=date_end, currency_id=currency.cbrf_id)
 
         for rate in raw_rates:
             with transaction.atomic():
-                cls.objects.create(
-                    currency=currency,
-                    date=str_to_date(rate.attrib['Date']),
-                    value=Decimal(rate.findtext('Value').replace(',', '.'))
-                )
+                try:
+                    cls.objects.create(
+                        currency=currency,
+                        date=str_to_date(rate.attrib['Date']),
+                        value=Decimal(rate.findtext('Value').replace(',', '.'))
+                    )
+                except IntegrityError:
+                    logger.warning("Rate {} for {} already in db. Skipped.".format(
+                        currency.eng_name, str_to_date(rate.attrib['Date'])))
 
         return cls.objects.filter(currency=currency, date__gte=date_begin, date__lte=date_end)
+
+    @classmethod
+    def populate_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime,
+                           currency: AbstractCurrency):
+        cls._populate_for_dates(date_begin, date_end, currency)
 
     @classmethod
     def get_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime, currency: AbstractCurrency):
         """ Try to get rates from local DB. If response is empty -> try to get from CBR API """
 
-        currency = get_currency_model('Currency').objects.get(cbrf_id=currency.cbrf_id)
+        currency = get_cbrf_model('Currency').objects.get(cbrf_id=currency.cbrf_id)
         rates = cls.objects.filter(
             currency=currency,
             date__gte=date_begin,
