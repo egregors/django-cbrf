@@ -6,7 +6,7 @@ import logging
 from django.core.management import BaseCommand
 from django.db import IntegrityError
 
-from django_cbrf.utils import get_currency_model
+from django_cbrf.utils import get_cbrf_model
 
 logger = logging.getLogger(__name__)
 
@@ -27,14 +27,11 @@ To force populate use:
                             help='Populate Currencies even they already exist')
 
     def handle(self, *args, **options):
-        Currency = get_currency_model('Currency')
+        Currency = get_cbrf_model('Currency')
 
         force = options.get('force', False)
 
-        if force:
-            Currency.objects.all().delete()
-            Currency.populate()
-        else:
+        if not force:
             try:
                 Currency.populate()
             except IntegrityError:
@@ -44,3 +41,8 @@ To force populate use:
                     'Currencies already populated. '
                     'To force populate use "python manage.py load_currencies --force"'
                 )
+        else:
+            Currency.objects.all().delete()
+            Currency.populate()
+
+        logger.info('Done. Currencies was populated.')
