@@ -121,6 +121,20 @@ class RecordsTestCase(TestCase):
         with self.assertRaisesMessage(ValueError, "Error in parameters"):
             record = Record.populate_for_date(currency=usd, date=date)
 
+    def test_get_for_date(self):
+        usd = Currency.objects.get(cbrf_id='R01235')
+
+        date = datetime(2015, 3, 12).date()
+        record = Record.get_for_date(usd, date)
+        self.assertEqual(record.date, date)
+        self.assertEqual(record.value, Decimal('62.6797'))
+
+        date_1, date_2 = datetime(2015, 3, 12).date(), datetime(2015, 3, 20).date()
+        Record._populate_for_dates(date_1, date_2, usd)
+
+        record = Record.get_for_date(usd, datetime(2015, 3, 17).date())
+        self.assertEqual(record.value, Decimal('62.1497'))
+
     def test_get_for_dates(self):
         self.assertEqual(len(Record.objects.all()), 0)
 

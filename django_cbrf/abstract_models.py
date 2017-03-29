@@ -188,6 +188,18 @@ class AbstractRecord(models.Model):
         cls._populate_for_dates(date_begin, date_end, currency)
 
     @classmethod
+    def get_for_date(cls, currency: AbstractCurrency, date: datetime.datetime = None, force: bool = False):
+
+        currency = get_cbrf_model('Currency').objects.get(cbrf_id=currency.cbrf_id)
+        if force:
+            rate = cls._populate_for_date(currency, date)
+        else:
+            rate = cls.objects.filter(currency=currency, date=date).all()
+            rate = rate.first() if rate else cls._populate_for_date(currency, date)
+
+        return rate
+
+    @classmethod
     def get_for_dates(cls, date_begin: datetime.datetime,
                       date_end: datetime.datetime, currency: AbstractCurrency,
                       force: bool = False):
