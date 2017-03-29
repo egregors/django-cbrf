@@ -103,6 +103,24 @@ class RecordsTestCase(TestCase):
         self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=6).first().value, Decimal('28.6600'))
         self.assertEqual(rates.filter(date__year=2001, date__month=3, date__day=7).first().value, Decimal('28.6300'))
 
+    def test_populate_for_date(self):
+        self.assertEqual(len(Record.objects.all()), 0)
+
+        usd = Currency.objects.get(cbrf_id='R01235')
+
+        date = datetime(2017, 2, 25)
+        record = Record.populate_for_date(currency=usd, date=date)
+
+        self.assertEqual(record.date, datetime(2017, 2, 23).date())
+        self.assertEqual(record.value, Decimal('57.4762'))
+
+    def test_populate_for_date_with_bad_parameters(self):
+        date = datetime(1213, 2, 2).date()
+        usd = Currency.objects.get(cbrf_id='R01235')
+
+        with self.assertRaisesMessage(ValueError, "Error in parameters"):
+            record = Record.populate_for_date(currency=usd, date=date)
+
     def test_get_for_dates(self):
         self.assertEqual(len(Record.objects.all()), 0)
 

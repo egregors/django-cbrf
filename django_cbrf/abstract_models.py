@@ -5,7 +5,7 @@ import datetime
 import logging
 from decimal import Decimal
 
-from cbrf import get_currencies_info, get_dynamic_rates
+from cbrf import get_currencies_info, get_dynamic_rates, get_daily_rates
 from cbrf.utils import str_to_date
 from django.db import models, transaction, IntegrityError
 from django.utils.translation import ugettext_lazy as _
@@ -132,6 +132,28 @@ class AbstractRecord(models.Model):
         return '[{}] {}: {}'.format(self.currency.iso_char_code, self.date, self.value)
 
     @classmethod
+    def _populate_for_date(cls, currency: AbstractCurrency, date: datetime.datetime = None):
+
+        raw_rates = get_daily_rates(date)
+        record = [rate for rate in raw_rates if rate.attrib['ID'] == currency.cbrf_id]
+
+        if record:
+            actual_date = str_to_date(raw_rates.attrib['Date'])
+            rate = record[0]
+            with transaction.atomic():
+                try:
+                    return cls.objects.create(
+                        currency=currency,
+                        date=actual_date.date(),
+                        value=Decimal(rate.findtext('Value').replace(',', '.'))
+                    )
+                except IntegrityError:
+                    logger.warning("Rate {} for {} already in db. Skipped.".format(
+                        currency.eng_name, actual_date))
+
+        raise ValueError("Error in parameters")
+
+    @classmethod
     def _populate_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime,
                             currency: AbstractCurrency):
         """ Load list of currency rates from date_begin to date_end.
@@ -147,7 +169,7 @@ class AbstractRecord(models.Model):
                 try:
                     cls.objects.create(
                         currency=currency,
-                        date=str_to_date(rate.attrib['Date']),
+                        date=str_to_date(rate.attrib['Date']).date(),
                         value=Decimal(rate.findtext('Value').replace(',', '.'))
                     )
                 except IntegrityError:
@@ -157,18 +179,30 @@ class AbstractRecord(models.Model):
         return cls.objects.filter(currency=currency, date__gte=date_begin, date__lte=date_end)
 
     @classmethod
+    def populate_for_date(cls, currency: AbstractCurrency, date: datetime.datetime = None):
+        return cls._populate_for_date(currency, date)
+
+    @classmethod
     def populate_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime,
                            currency: AbstractCurrency):
         cls._populate_for_dates(date_begin, date_end, currency)
 
     @classmethod
-    def get_for_dates(cls, date_begin: datetime.datetime, date_end: datetime.datetime, currency: AbstractCurrency):
+    def get_for_dates(cls, date_begin: datetime.datetime,
+                      date_end: datetime.datetime, currency: AbstractCurrency,
+                      force: bool = False):
         """ Try to get rates from local DB. If response is empty -> try to get from CBR API """
 
         currency = get_cbrf_model('Currency').objects.get(cbrf_id=currency.cbrf_id)
-        rates = cls.objects.filter(
-            currency=currency,
-            date__gte=date_begin,
-            date__lte=date_end)
 
-        return rates if rates else cls._populate_for_dates(date_begin, date_end, currency)
+        if force:
+            rates = cls._populate_for_dates(date_begin, date_end, currency)
+        else:
+            rates = cls.objects.filter(
+                currency=currency,
+                date__gte=date_begin,
+                date__lte=date_end)
+            if not rates:
+                rates = cls._populate_for_dates(date_begin, date_end, currency)
+
+        return rates
