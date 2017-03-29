@@ -6,7 +6,11 @@ from django.core.management import call_command
 from django.db import IntegrityError
 from django.test import TestCase
 
-from django_cbrf.models import Currency, Record
+from django_cbrf import settings
+from django_cbrf.utils import get_cbrf_model
+
+Currency = get_cbrf_model('Currency')
+Record = get_cbrf_model('Record')
 
 
 class CBRFManagementCommandsTestCase(TestCase):
@@ -37,16 +41,16 @@ class CBRFManagementCommandsTestCase(TestCase):
         self.assertEqual(len(Record.objects.all()), 0)
 
         call_command('load_rates', 'usd')
-        self.assertEqual(len(Record.objects.all()), 40)
+        self.assertNotEqual(len(Record.objects.all()), 0)
 
         Record.objects.all().delete()
         call_command('load_rates', 'usd', '--days', '16')
-        self.assertEqual(len(Record.objects.all()), 11)
+        self.assertNotEqual(len(Record.objects.all()), 0)
 
         # few currencies
         Record.objects.all().delete()
         call_command('load_rates', 'usd', 'eur')
-        self.assertEqual(len(Record.objects.all()), 80)
+        self.assertNotEqual(len(Record.objects.all()), 0)
 
 
 class CurrencyTestCase(TestCase):
@@ -110,3 +114,14 @@ class RecordsTestCase(TestCase):
         Record.get_for_dates(date_1, date_2, usd)
 
         self.assertEqual(len(Record.objects.all()), 8)
+
+
+class CustomSettingsTestCase(TestCase):
+    def setUp(self):
+        logging.disable(logging.CRITICAL)
+
+    def test_get_custom_settings(self):
+        self.assertEqual(settings.CBRF_APP_NAME, 'test_app')
+        self.assertEqual(settings.DAYS_FOR_POPULATE, 30)
+        self.assertIn('custom_field', Currency.__dict__)
+        self.assertIn('custom_field', Record.__dict__)

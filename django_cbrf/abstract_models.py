@@ -117,7 +117,8 @@ class AbstractCurrency(models.Model):
 
 class AbstractRecord(models.Model):
     """ Abstract Record model """
-    currency = models.ForeignKey(CBRF_APP_NAME + '.Currency', on_delete=models.CASCADE)
+    currency = models.ForeignKey(CBRF_APP_NAME + '.Currency', on_delete=models.CASCADE,
+                                 related_name="%(app_label)s_%(class)s")
     date = models.DateField()
     value = models.DecimalField(verbose_name=_('value'), max_digits=9, decimal_places=4)
 
