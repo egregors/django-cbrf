@@ -1,8 +1,17 @@
 language: python
 python:
+- '3.4'
 - '3.5'
 - '3.6'
+env:
+  matrix:
+    - DJANGO="Django<1.9"
+    - DJANGO="Django<1.10"
+cache:
+  directories:
+    - $HOME/.cache/pip
 install:
+- pip install "$DJANGO"
 - pip install -e .
 script:
 - cd tests && python manage.py test test_app
@@ -10,3 +19,13 @@ notifications:
   slack:
     rooms:
       secure: jxFJWa9UaphsVUCkDCWhQIt7m5hbXY1Dltk2V7c9QFyZZl7BDx9p0PrVb0IaZ19DIAbC+G1MKT+zCWvbVyAeodDVcAgSRkj2Z9+zc8Qqc/t8PEtxQR9hVIs1p9PA1yFuVcfAa1abIJiC8A19r+EWtLI29WwG9Bmq620KDxWXLoaBRMm50NoCgP+H08hWTZ9D6Z6IX1lTtg8XlycKEEok0glqmRqmEkdObnTZgEVYfc7sPbE6cIDc4v//9LQ5EEscGFlQ1Bmr3jLpAmJGvumZfMK2L9YTOvA7w/5o9aqyxI07YYtmKEQw6GEGIzIL7M6Jb9yIpzHYIx4Ib2p3OtEKrpwhEhXGS3cCCyoZve5jtID/INpB18D9qo2w8a5L42ASaCEzMxmiFSs7S4yppCvGiHCH8VLXvNMvj+Jr9Dg/BEBmygSXp9zvUPsi3UVovWX7Myeaz0PrDADNse+UyTmcuF2riRzU8lEEKB+gJIWz2a1Rc64cP+yhc4Iy1nO32YUEvpEyHDZ6/8h4yO3Y+pM0oRsDn7I9mlQZ4qAeGyEvmhJN+xdWePsyY03qzbvhVA6mwZNq8j7ga+tt3s4UM8F1M1ZzgpP56YvB1djQnb6Xg2Bo9fihzUdbKfHuEbLhgN9te3C0jF/QLUibsb4BXTJMEm4uztVW9d1W4rNzjqhBQ+4=
+deploy:
+  provider: pypi
+  user: egregors
+  password:
+    secure: fTqNmQ68pJ12/Sc5qk6fDcvw7NqgpRcGfjMVI6kdO5tgO3lQe0lJprylNtwRtJF4iqcfcBwdQ/RrxaIOwRzl4Jw31FSkdq3jp4lH4bLARfFPI0d1Vq/aYoiKnMjty/3U4dUeHLHviiiqukCl5ZJ+XM3WJfLp4xppibIqV0Hb96TylAfU9Zk7PL9Jm+LATX8Mw+Yyec/WmlTiKPGzuv9ukwpvBu2vBOn8SPJoXxjyJbi3gMuFvTmUXtP+3u3MKMTuaDKeq5w156mW2kn76swEHn65Ak4aeAhxHoTKBmYbQikOYq89NYlOSqYrIKtVzE8oR8mRov9aaOpwrQO7ESNEwyQIdhHPTAxyc9ByogYmfaLZdKQdDAPK2n1eUfzUZXFblPvG9DM5rO7S5VBYiax8O5rbGfOd/NN4mNyz7Et2tK5KsmXqKMsrMuzXEEqQV+wKjuly0TxknjeYCDA52k7Izt3ubjCnf3sSVyzPKIWEafYKU7XpjuBoSbCACt1eL4LxPcFL1hq70odOJLj3ltDQZ3DBjCFXjfcjm0JvSWJ8qACFCFriIXpE8b0m01U38/Xzc9cpCP8jhoTuCS7yCDWAYS3R/ge25UGGeQ0AvhW+PVbhYayb47IL8aKVN/PHxJPuzpAya6nBY9Fujidt9Ybfgu/JfRNtBp8Zhge3mjI0Hns=
+  on:
+    tags: true
+    repo: Egregors/django-cbrf
+    all_branches: true
+    distributions: sdist bdist_wheel
