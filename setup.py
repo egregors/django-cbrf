@@ -3,12 +3,14 @@ from __future__ import unicode_literals, absolute_import
 
 from distutils.core import setup
 
+from setuptools import find_packages
+
 from django_cbrf import __version__
 
 setup(
     name='django_cbrf',
     version=__version__,
-    packages=['django_cbrf'],
+    packages=find_packages(),
     install_requires=[
         "django>=1.10",
         "cbrf==0.3.3",
