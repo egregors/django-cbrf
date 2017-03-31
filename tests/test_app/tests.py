@@ -31,10 +31,10 @@ class CBRFManagementCommandsTestCase(TestCase):
             call_command('load_currencies')
 
         Currency.objects.first().delete()
-        self.assertEqual(len(Currency.objects.all()), 59)
+        self.assertEqual(len(Currency.objects.all()), 60)
 
         call_command('load_currencies', '--force')
-        self.assertEqual(len(Currency.objects.all()), 60)
+        self.assertEqual(len(Currency.objects.all()), 61)
 
     def test_load_rates(self):
         """ Try to populate some rates records """
