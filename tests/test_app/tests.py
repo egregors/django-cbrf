@@ -22,7 +22,7 @@ class CBRFManagementCommandsTestCase(TestCase):
 
         self.assertEqual(len(Currency.objects.all()), 0)
         call_command('load_currencies')
-        self.assertEqual(len(Currency.objects.all()), 60)
+        self.assertEqual(len(Currency.objects.all()), 61)
 
         with self.assertRaisesMessage(IntegrityError,
                                       'Currencies already populated. '
