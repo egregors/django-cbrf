@@ -42,7 +42,6 @@ To force populate use:
                     'To force populate use "python manage.py load_currencies --force"'
                 )
         else:
-            Currency.objects.all().delete()
-            Currency.populate()
+            Currency.populate(force=True)
 
         logger.info('Done. Currencies was populated.')

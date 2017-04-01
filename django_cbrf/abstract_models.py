@@ -44,7 +44,7 @@ class AbstractCurrency(models.Model):
         return '[{}] {}/{}'.format(self.iso_char_code, self.name, self.eng_name)
 
     @classmethod
-    def _populate(cls):
+    def _populate(cls, force: bool = False):
         """ Load list of Currencies from cbr.ru and save all.
         
         XML Elements -> models.Model
@@ -74,20 +74,29 @@ class AbstractCurrency(models.Model):
             _iso_num_code = currency.findtext('ISO_Num_Code')
             _iso_char_code = currency.findtext('ISO_Char_Code')
 
-            with transaction.atomic():
-                cls.objects.create(
-                    cbrf_id=currency.attrib['ID'],
-                    parent_code=currency.findtext('ParentCode'),
-                    name=currency.findtext('Name'),
-                    eng_name=currency.findtext('EngName'),
-                    denomination=int(currency.findtext('Nominal')),
-                    iso_num_code=int(_iso_num_code) if _iso_num_code else None,
-                    iso_char_code=_iso_char_code if _iso_char_code else None,
-                )
+            try:
+                with transaction.atomic():
+                    cls.objects.create(
+                        cbrf_id=currency.attrib['ID'],
+                        parent_code=currency.findtext('ParentCode').replace(' ', ''),
+                        name=currency.findtext('Name'),
+                        eng_name=currency.findtext('EngName'),
+                        denomination=int(currency.findtext('Nominal')),
+                        iso_num_code=int(_iso_num_code) if _iso_num_code else None,
+                        iso_char_code=_iso_char_code if _iso_char_code else None,
+                    )
+            except IntegrityError as err:
+                if force:
+                    logger.warning('{} with id: {} is already populated. Skipping.'.format(
+                        currency.findtext('EngName'),
+                        currency.attrib['ID'])
+                    )
+                else:
+                    raise err
 
     @classmethod
-    def populate(cls):
-        cls._populate()
+    def populate(cls, force: bool = False):
+        cls._populate(force=force)
 
     @classmethod
     def get_by_cbrf_id(cls, cbrf_id: str):
