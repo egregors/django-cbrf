@@ -9,3 +9,6 @@ Changes
 
 #### ver.: 0.3 (01.04.2017)
 * Fixed issue #1
+
+#### ver.: 0.3.1 (03.04.2017)
+* Minor fix

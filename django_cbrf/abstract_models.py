@@ -159,6 +159,7 @@ class AbstractRecord(models.Model):
                 except IntegrityError:
                     logger.warning("Rate {} for {} already in db. Skipped.".format(
                         currency.eng_name, actual_date))
+                    return
 
         raise ValueError("Error in parameters")
 
