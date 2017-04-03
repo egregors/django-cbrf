@@ -13,10 +13,11 @@ from django.utils.translation import ugettext_lazy as _
 from django_cbrf.utils import get_cbrf_model
 from .settings import CBRF_APP_NAME, DEBUG
 
+logger = logging.getLogger(__name__)
+
 if DEBUG:
     logging.basicConfig(level=logging.DEBUG,
                         format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-    logger = logging.getLogger(__name__)
 else:
     logging.disable(logging.CRITICAL)
 
