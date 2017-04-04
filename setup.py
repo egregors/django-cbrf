@@ -21,7 +21,7 @@ setup(
     author_email='egregors@yandex.ru',
     description='Django app to integrate Wrapper for The Central Bank of the Russian Federation site API '
                 'with your project',
-    long_description=open('README.md').read(),
+    long_description=open('README.md', 'r', encoding='utf-8').read(),
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Web Environment",
