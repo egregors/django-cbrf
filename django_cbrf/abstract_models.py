@@ -11,15 +11,9 @@ from django.db import models, transaction, IntegrityError
 from django.utils.translation import ugettext_lazy as _
 
 from django_cbrf.utils import get_cbrf_model
-from .settings import CBRF_APP_NAME, DEBUG
+from .settings import CBRF_APP_NAME
 
 logger = logging.getLogger(__name__)
-
-if DEBUG:
-    logging.basicConfig(level=logging.DEBUG,
-                        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
-else:
-    logging.disable(logging.CRITICAL)
 
 
 class AbstractCurrency(models.Model):

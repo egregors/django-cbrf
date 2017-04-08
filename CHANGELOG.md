@@ -12,3 +12,6 @@ Changes
 
 #### ver.: 0.3.1 (03.04.2017)
 * Minor fix
+
+#### ver.: 0.3.1 (08.04.2017)
+* Move logger configuration to the settings file
