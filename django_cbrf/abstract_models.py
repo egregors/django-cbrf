@@ -23,7 +23,7 @@ class AbstractCurrency(models.Model):
 
     name = models.CharField(verbose_name=_('name'), max_length=64)
     eng_name = models.CharField(verbose_name=_('english name'), max_length=64)
-    denomination = models.SmallIntegerField(verbose_name=_('denomination'), default=1)
+    denomination = models.IntegerField(verbose_name=_('denomination'), default=1)
     iso_num_code = models.SmallIntegerField(verbose_name=_('ISO numeric code'), blank=True,
                                             null=True, default=None)
     iso_char_code = models.CharField(verbose_name=_('ISO char code'), max_length=3, blank=True,
