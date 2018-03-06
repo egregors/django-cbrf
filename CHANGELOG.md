@@ -21,3 +21,7 @@ Changes
 
 #### ver.: 0.3.4 (09.05.2017)
 * Move denomination field to INTEGER type, instead SmallInteger (Issue #2)
+
+#### ver.: 0.3.5 (06.02.2018)
+* cbrf update
+* Drop Django 1.9 support
