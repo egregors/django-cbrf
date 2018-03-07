@@ -25,3 +25,7 @@ Changes
 #### ver.: 0.3.5 (06.02.2018)
 * cbrf update
 * Drop Django 1.9 support
+
+#### ver.: 0.3.6 (07.02.2018)
+* cbrf update
+* Drop python 3.4 support
