@@ -4,8 +4,8 @@ python:
 - '3.6'
 env:
   matrix:
-  - DJANGO="Django=2.1"
-  - DJANGO="Django=2.2"
+  - DJANGO="Django==2.1.5"
+  - DJANGO="Django==2.2"
   - DJANGO="Django<3"
 
 cache:
@@ -16,10 +16,6 @@ install:
 - pip install -e .
 script:
 - python tests/manage.py test test_app
-notifications:
-  slack:
-    rooms:
-      secure: jxFJWa9UaphsVUCkDCWhQIt7m5hbXY1Dltk2V7c9QFyZZl7BDx9p0PrVb0IaZ19DIAbC+G1MKT+zCWvbVyAeodDVcAgSRkj2Z9+zc8Qqc/t8PEtxQR9hVIs1p9PA1yFuVcfAa1abIJiC8A19r+EWtLI29WwG9Bmq620KDxWXLoaBRMm50NoCgP+H08hWTZ9D6Z6IX1lTtg8XlycKEEok0glqmRqmEkdObnTZgEVYfc7sPbE6cIDc4v//9LQ5EEscGFlQ1Bmr3jLpAmJGvumZfMK2L9YTOvA7w/5o9aqyxI07YYtmKEQw6GEGIzIL7M6Jb9yIpzHYIx4Ib2p3OtEKrpwhEhXGS3cCCyoZve5jtID/INpB18D9qo2w8a5L42ASaCEzMxmiFSs7S4yppCvGiHCH8VLXvNMvj+Jr9Dg/BEBmygSXp9zvUPsi3UVovWX7Myeaz0PrDADNse+UyTmcuF2riRzU8lEEKB+gJIWz2a1Rc64cP+yhc4Iy1nO32YUEvpEyHDZ6/8h4yO3Y+pM0oRsDn7I9mlQZ4qAeGyEvmhJN+xdWePsyY03qzbvhVA6mwZNq8j7ga+tt3s4UM8F1M1ZzgpP56YvB1djQnb6Xg2Bo9fihzUdbKfHuEbLhgN9te3C0jF/QLUibsb4BXTJMEm4uztVW9d1W4rNzjqhBQ+4=
 deploy:
   provider: pypi
   user: egregors
@@ -29,4 +25,8 @@ deploy:
     tags: true
     distributions: sdist bdist_wheel
     repo: egregors/django-cbrf
-    branch: master
+    all_branches: true
+notifications:
+  slack:
+    rooms:
+      secure: jxFJWa9UaphsVUCkDCWhQIt7m5hbXY1Dltk2V7c9QFyZZl7BDx9p0PrVb0IaZ19DIAbC+G1MKT+zCWvbVyAeodDVcAgSRkj2Z9+zc8Qqc/t8PEtxQR9hVIs1p9PA1yFuVcfAa1abIJiC8A19r+EWtLI29WwG9Bmq620KDxWXLoaBRMm50NoCgP+H08hWTZ9D6Z6IX1lTtg8XlycKEEok0glqmRqmEkdObnTZgEVYfc7sPbE6cIDc4v//9LQ5EEscGFlQ1Bmr3jLpAmJGvumZfMK2L9YTOvA7w/5o9aqyxI07YYtmKEQw6GEGIzIL7M6Jb9yIpzHYIx4Ib2p3OtEKrpwhEhXGS3cCCyoZve5jtID/INpB18D9qo2w8a5L42ASaCEzMxmiFSs7S4yppCvGiHCH8VLXvNMvj+Jr9Dg/BEBmygSXp9zvUPsi3UVovWX7Myeaz0PrDADNse+UyTmcuF2riRzU8lEEKB+gJIWz2a1Rc64cP+yhc4Iy1nO32YUEvpEyHDZ6/8h4yO3Y+pM0oRsDn7I9mlQZ4qAeGyEvmhJN+xdWePsyY03qzbvhVA6mwZNq8j7ga+tt3s4UM8F1M1ZzgpP56YvB1djQnb6Xg2Bo9fihzUdbKfHuEbLhgN9te3C0jF/QLUibsb4BXTJMEm4uztVW9d1W4rNzjqhBQ+4=

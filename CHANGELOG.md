@@ -36,4 +36,7 @@ Changes
 * Makefile (build, test, install)
 * drop 1.x django support
 
+#### ver.: 0.4.1 (15.08.2019)
+* i hate travis
+
 
