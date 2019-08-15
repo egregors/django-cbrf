@@ -29,3 +29,10 @@ Changes
 #### ver.: 0.3.6 (07.02.2018)
 * cbrf update
 * Drop python 3.4 support
+
+#### ver.: 0.3.7 (15.08.2019)
+* cbrf update
+* pypi staff
+* Makefile (build, test, install)
+
+

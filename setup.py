@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-from __future__ import unicode_literals, absolute_import
-
-from distutils.core import setup
 
 from setuptools import find_packages
+from setuptools import setup
 
 from django_cbrf import __version__
 
@@ -13,7 +10,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "django>=1.10",
-        "cbrf==0.4.3",
+        "cbrf==0.4.7",
     ],
     url='https://github.com/Egregors/django-cbrf',
     license='MIT',
@@ -22,6 +19,7 @@ setup(
     description='Django app to integrate Wrapper for The Central Bank of the Russian Federation site API '
                 'with your project',
     long_description=open('README.md', 'r', encoding='utf-8').read(),
+    long_description_content_type='text/markdown',
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Web Environment",

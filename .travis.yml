@@ -4,8 +4,11 @@ python:
 - '3.6'
 env:
   matrix:
-  - DJANGO="Django<1.10"
-  - DJANGO="Django<1.11"
+  - DJANGO="Django=1.10"
+  - DJANGO="Django=1.11"
+  - DJANGO="Django=2.1"
+  - DJANGO="Django=2.2"
+  - DJANGO="Django<3"
 
 cache:
   directories:
@@ -25,6 +28,7 @@ deploy:
   password:
     secure: mrLMFx1/MUsvorsk6O1BqfL6S7vzQ7vbnO9+B+VbZ5yC+tE1tLf+Tqzc5b0K0xtlerZrF4HxXM+0IKprhItYMF2HyPvjFek/SMrfNhlOiRdMBDHQRXBlodICgAtIXkFTsK/FgVuV+GAUyl2lc1ICHu31gvJ1k2CERA3PIJxLkSbQ77Fp/5cQL8XTwAA4ABklXYnYGa0XW872Fva4GZUJB1EgK27vt8wklcY/wsL2ZqcoNsSkHv1ib6hCssTP6kzh4UKNe92RVc0FZHW50zCWEp3tXr/ulT9JC16s/z+i146xwkhjnEZNlYPDFv1VEXOkBtY7+zTbv+CBOhG1+/DaWNHNl6FZYIGpChgN7yG57C8WYxjhNR/qp3w4H8T4f+NVR2WsITf0dvkxpKHJ80gmH4JZpcmYC9LrLtPAbNwrMT99yjx6jz9javUsEo1oPQQzsplMh0DytH0EFalCacN+zOavniB2RdYR1l6hMtA/BHWTRcUJWMDWuuixFPBBu+pNULEPcZoLSh4gRwT00Qw0CjM9jc7+6Li+TPYbTEpdxV2DvJMVQ5irssI3+xgQsK/20R/rAX9YoW8ZGgYNy65uIThhacFe2vd5Alqsp8AvZRI3WtczhBf7rewY29qTinQEwYKp+0gEGPJ10HSrbyHaduC26BrCvrRQswqMeeBVpuA=
   on:
+    tags: true
     distributions: sdist bdist_wheel
-    repo: Egregors/django-cbrf
+    repo: egregors/django-cbrf
     branch: master
