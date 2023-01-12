@@ -8,7 +8,10 @@ from decimal import Decimal
 from cbrf import get_currencies_info, get_dynamic_rates, get_daily_rates
 from cbrf.utils import str_to_date
 from django.db import models, transaction, IntegrityError
-from django.utils.translation import ugettext_lazy as _
+try:
+    from django.utils.translation import ugettext_lazy as _
+except ImportError: #fix for django > 3
+    from django.utils.translation import gettext_lazy as _
 
 from django_cbrf.utils import get_cbrf_model
 from .settings import CBRF_APP_NAME
