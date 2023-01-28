@@ -11,9 +11,9 @@
 
 Для запуска необходимы:
 
-* Python 3.x
-* Django
-* [cbrf](https://github.com/Egregors/cbrf)
+* Python >= 3
+* Django >= 3.8
+* [cbrf](https://github.com/egregors/cbrf)
 
 Установка из PyPI:
 ```
@@ -22,7 +22,7 @@
 
 Версия для разработчиков:
 ```
-    git clone https://github.com/Egregors/django-cbrf.git
+    git clone https://github.com/egregors/django-cbrf.git
     cd django-cbrf
     pip install -e .
 ```
