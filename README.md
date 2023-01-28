@@ -2,7 +2,7 @@
 
 Приложение для удобной работы с валютами и курсами валют от ЦБ РФ
 
-[![Build Status](https://travis-ci.org/Egregors/django-silly-search.svg?branch=master)](https://travis-ci.org/Egregors/django-silly-search)
+[![Build Status](https://github.com/egregors/django-cbrf/actions/workflows/test.yml/badge.svg)](https://github.com/egregors/django-cbrf/actions/workflows/test.yml)
 [![PyPI version](https://badge.fury.io/py/django-cbrf.svg)](https://badge.fury.io/py/django-cbrf)
 
 [Сайт](http://www.cbr.ru/) and [API](http://www.cbr.ru/scripts/Root.asp?PrtId=SXML) Центробанка.
