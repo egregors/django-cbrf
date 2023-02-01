@@ -2,7 +2,7 @@
 
 Приложение для удобной работы с валютами и курсами валют от ЦБ РФ
 
-[![Build Status](https://travis-ci.org/Egregors/django-silly-search.svg?branch=master)](https://travis-ci.org/Egregors/django-silly-search)
+[![Build Status](https://github.com/egregors/django-cbrf/actions/workflows/test.yml/badge.svg)](https://github.com/egregors/django-cbrf/actions/workflows/test.yml)
 [![PyPI version](https://badge.fury.io/py/django-cbrf.svg)](https://badge.fury.io/py/django-cbrf)
 
 [Сайт](http://www.cbr.ru/) and [API](http://www.cbr.ru/scripts/Root.asp?PrtId=SXML) Центробанка.
@@ -11,9 +11,9 @@
 
 Для запуска необходимы:
 
-* Python 3.x
-* Django
-* [cbrf](https://github.com/Egregors/cbrf)
+* Python >= 3
+* Django >= 3.8
+* [cbrf](https://github.com/egregors/cbrf)
 
 Установка из PyPI:
 ```
@@ -22,7 +22,7 @@
 
 Версия для разработчиков:
 ```
-    git clone https://github.com/Egregors/django-cbrf.git
+    git clone https://github.com/egregors/django-cbrf.git
     cd django-cbrf
     pip install -e .
 ```

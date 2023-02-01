@@ -10,7 +10,7 @@ from cbrf.utils import str_to_date
 from django.db import models, transaction, IntegrityError
 try:
     from django.utils.translation import ugettext_lazy as _
-except ImportError: #fix for django > 3
+except ImportError:  # django > 3
     from django.utils.translation import gettext_lazy as _
 
 from django_cbrf.utils import get_cbrf_model

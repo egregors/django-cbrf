@@ -39,4 +39,12 @@ Changes
 #### ver.: 0.4.1 (15.08.2019)
 * i hate travis
 
-
+#### ver.: 0.5.0 (28.01.2023)
+* add Django 4.x support (@zool1268)
+* add GitHub action (tests)
+* fix tests
+* update Makefile (fancy output, venv paths)
+* update cbrf package to version 0.5
+* drop travis
+* drop Django <= 2 support
+* drop Python <= 3.7 support

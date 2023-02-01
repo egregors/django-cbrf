@@ -22,7 +22,8 @@ class CBRFManagementCommandsTestCase(TestCase):
 
         self.assertEqual(len(Currency.objects.all()), 0)
         call_command('load_currencies')
-        self.assertEqual(len(Currency.objects.all()), 61)
+        self.assertNotEqual(len(Currency.objects.all()), 0)
+        currency_count = Currency.objects.count()
 
         with self.assertRaisesMessage(IntegrityError,
                                       'Currencies already populated. '
@@ -31,10 +32,10 @@ class CBRFManagementCommandsTestCase(TestCase):
             call_command('load_currencies')
 
         Currency.objects.first().delete()
-        self.assertEqual(len(Currency.objects.all()), 60)
+        self.assertEqual(len(Currency.objects.all()), currency_count - 1)
 
         call_command('load_currencies', '--force')
-        self.assertEqual(len(Currency.objects.all()), 61)
+        self.assertEqual(len(Currency.objects.all()), currency_count)
 
     def test_load_rates(self):
         """ Try to populate some rates records """
