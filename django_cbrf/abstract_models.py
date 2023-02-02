@@ -148,16 +148,15 @@ class AbstractRecord(models.Model):
             actual_date = str_to_date(raw_rates.attrib['Date'])
             rate = record[0]
             with transaction.atomic():
-                try:
-                    return cls.objects.create(
-                        currency=currency,
-                        date=actual_date.date(),
-                        value=Decimal(rate.findtext('Value').replace(',', '.'))
-                    )
-                except IntegrityError:
+                (record, _created) = cls.objects.get_or_create(
+                    currency=currency,
+                    date=actual_date.date(),
+                    value=Decimal(rate.findtext('Value').replace(',', '.'))
+                )
+                if not _created:
                     logger.warning("Rate {} for {} already in db. Skipped.".format(
                         currency.eng_name, actual_date))
-                    return
+                return record
 
         raise ValueError("Error in parameters")
 
@@ -226,3 +225,13 @@ class AbstractRecord(models.Model):
                 rates = cls._populate_for_dates(date_begin, date_end, currency)
 
         return rates
+
+    @classmethod
+    def get_latest(cls, currency: AbstractCurrency, force: bool = False, date: datetime.datetime = None):
+        """ return latest rate for given currency and date"""
+        if not date:
+            date = datetime.datetime.today()
+        record = cls.get_for_date(currency, date=date, force=force)
+        if not record:
+            record = cls.objects.filter(currency=currency, date__lte=date).order_by("-date").first()
+        return record
