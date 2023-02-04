@@ -39,7 +39,7 @@ Changes
 #### ver.: 0.4.1 (15.08.2019)
 * i hate travis
 
-#### ver.: 0.5.0 (28.01.2023)
+#### ver.: 1.0.0 (28.01.2023)
 * add Django 4.x support (@zool1268)
 * add GitHub action (tests)
 * fix tests
@@ -48,3 +48,7 @@ Changes
 * drop travis
 * drop Django <= 2 support
 * drop Python <= 3.7 support
+
+#### ver.: 1.0.1 (04.02.2023)
+* add `Record.get_latest` and `Record.get_latest_for_date` (@zool1268)
+* cleanup, tests fix

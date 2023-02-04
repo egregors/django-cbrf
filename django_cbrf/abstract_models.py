@@ -8,6 +8,7 @@ from decimal import Decimal
 from cbrf import get_currencies_info, get_dynamic_rates, get_daily_rates
 from cbrf.utils import str_to_date
 from django.db import models, transaction, IntegrityError
+
 try:
     from django.utils.translation import ugettext_lazy as _
 except ImportError:  # django > 3
@@ -148,16 +149,15 @@ class AbstractRecord(models.Model):
             actual_date = str_to_date(raw_rates.attrib['Date'])
             rate = record[0]
             with transaction.atomic():
-                try:
-                    return cls.objects.create(
-                        currency=currency,
-                        date=actual_date.date(),
-                        value=Decimal(rate.findtext('Value').replace(',', '.'))
-                    )
-                except IntegrityError:
+                (record, _created) = cls.objects.get_or_create(
+                    currency=currency,
+                    date=actual_date.date(),
+                    value=Decimal(rate.findtext('Value').replace(',', '.'))
+                )
+                if not _created:
                     logger.warning("Rate {} for {} already in db. Skipped.".format(
                         currency.eng_name, actual_date))
-                    return
+                return record
 
         raise ValueError("Error in parameters")
 
@@ -226,3 +226,19 @@ class AbstractRecord(models.Model):
                 rates = cls._populate_for_dates(date_begin, date_end, currency)
 
         return rates
+
+    @classmethod
+    def get_latest(cls, currency: AbstractCurrency, force: bool = False) -> 'AbstractRecord':
+        """ Get the latest rate for given currency """
+        return cls.get_latest_for_date(currency, force, datetime.datetime.today())
+
+    @classmethod
+    def get_latest_for_date(cls, currency: AbstractCurrency, force: bool = False,
+                            date: datetime.datetime = None) -> 'AbstractRecord':
+        """ Get the latest rate for given currency and date """
+        if not date:
+            date = datetime.datetime.today()
+        record = cls.get_for_date(currency, date=date, force=force)
+        if not record:
+            record = cls.objects.filter(currency=currency, date__lte=date).order_by("-date").first()
+        return record
