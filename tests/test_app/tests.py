@@ -1,3 +1,4 @@
+import decimal
 import logging
 from datetime import datetime
 from decimal import Decimal
@@ -149,13 +150,14 @@ class RecordsTestCase(TestCase):
         self.assertEqual(len(Record.objects.all()), 8)
 
     def test_get_latest(self):
-        date = datetime(2022, 12, 30)
+        date = datetime(2022, 12, 31)
         usd = Currency.objects.get(cbrf_id='R01235')
-        record = Record.get_latest(usd, False, date)  # check for selected date not weekend
-        self.assertEqual(isinstance(record, Record), True)
+        record = Record.get_latest_for_date(usd, False, date)  # check for selected date not weekend
+        self.assertEqual(record.value, decimal.Decimal("70.3375"))
+
         date = datetime(2023, 1, 5)
-        record = Record.get_latest(usd, False, date)  # check for weekend (takes last day before weekend/holiday)
-        self.assertEqual(isinstance(record, Record), True)
+        record = Record.get_latest_for_date(usd, False, date)  # takes last day before weekend/holiday
+        self.assertEqual(record.value, decimal.Decimal("70.3375"))
 
 
 class CustomSettingsTestCase(TestCase):
