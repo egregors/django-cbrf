@@ -64,7 +64,7 @@ class CurrencyTestCase(TestCase):
         cbrf_id = 'R01500'
         bad_cbrf_id = 'meh'
 
-        self.assertEqual(Currency.get_by_cbrf_id(cbrf_id).eng_name, 'Moldova Lei')
+        self.assertEqual(Currency.get_by_cbrf_id(cbrf_id).eng_name, 'Moldovan Leu')
         self.assertIsNone(Currency.get_by_cbrf_id(bad_cbrf_id))
 
     def test_get_by_iso_num(self):

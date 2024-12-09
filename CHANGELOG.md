@@ -52,3 +52,7 @@ Changes
 #### ver.: 1.0.1 (04.02.2023)
 * add `Record.get_latest` and `Record.get_latest_for_date` (@zool1268)
 * cleanup, tests fix
+
+#### ver.: 1.0.2 (09.12.2024)
+* deps update: cbrf
+* tests fix
