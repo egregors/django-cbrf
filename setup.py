@@ -10,7 +10,7 @@ setup(
     packages=find_packages(),
     install_requires=[
         "django>=3.1",
-        "cbrf==0.5.0",
+        "cbrf==1.0.0",
     ],
     url='https://github.com/Egregors/django-cbrf',
     license='MIT',
